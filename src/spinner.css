@@ -1,0 +1,23 @@
+/* spinner.css */
+.loading-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #000; /* Fondo negro para que coincida con el tema de login */
+}
+
+.spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.spinner-logo {
+  width: 150px; /* Tamaño similar al logo del login */
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
