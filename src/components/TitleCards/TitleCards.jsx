@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './TitleCards.css';
 
-const TitleCards = ({ title, category }) => {
+const TitleCards = ({ title, category, type = "movie" }) => {
   const [apiData, setApiData] = useState([]);
   const cardsRef = useRef();
   const navigate = useNavigate();
@@ -24,40 +24,56 @@ const TitleCards = ({ title, category }) => {
   };
 
   useEffect(() => {
-    fetch(`https://api.themoviedb.org/3/movie/${category ? category : "now_playing"}?language=es-ES&page=1`, options)
+    const endpoint = `https://api.themoviedb.org/3/${type}/${category || (type === "movie" ? "now_playing" : "on_the_air")}?language=es-ES&page=1`;
+
+    fetch(endpoint, options)
       .then(res => res.json())
-      .then(res => setApiData(res.results))
+      .then(res => setApiData(res.results || []))
       .catch(err => console.error(err));
-  }, [category]);
+  }, [category, type]);
 
   const truncateDescription = (text) => {
-    if (text.length > 250) {
-      return text.substring(0, 250) + '...';
-    }
-    return text;
+    if (!text) return "";
+    return text.length > 250 ? text.substring(0, 250) + '...' : text;
   };
 
   return (
     <div className='title-cards'>
-      <h2>{title ? title : "Popular on Netflix"}</h2>
+      <h2>{title || "Popular on Netflix"}</h2>
       <div className="card-list-container">
         <button className="scroll-button left" onClick={handleScrollLeft}>
           &larr;
         </button>
         <div className="card-list" ref={cardsRef}>
-          {apiData.map((card, index) => {
-            return (
-              <div
-                className="card"
-                key={index}
-                onClick={() => navigate(`/movie/${card.id}`)}
-              >
-                <img src={'https://image.tmdb.org/t/p/w500' + card.backdrop_path} alt={card.title} />
-                <p className="card-title">{card.original_title}</p>
-                <p className="card-description">{truncateDescription(card.overview)}</p>
-              </div>
-            );
-          })}
+          {apiData.length > 0 ? (
+            apiData.map((card, index) => {
+              const displayTitle = card.title || card.name;
+              const displayImage = card.backdrop_path || card.poster_path;
+
+              return (
+                <div
+                  className="card"
+                  key={index}
+                  onClick={() => navigate(`/${type}/${card.id}`)}
+                >
+                  <img
+                    src={
+                      displayImage
+                        ? 'https://image.tmdb.org/t/p/w500' + displayImage
+                        : '/no-image.jpg'
+                    }
+                    alt={displayTitle}
+                  />
+                  <p className="card-title">{displayTitle}</p>
+                  <p className="card-description">
+                    {truncateDescription(card.overview)}
+                  </p>
+                </div>
+              );
+            })
+          ) : (
+            <p>No hay resultados disponibles</p>
+          )}
         </div>
         <button className="scroll-button right" onClick={handleScrollRight}>
           &rarr;

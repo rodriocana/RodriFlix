@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './Login.css';
 import logo from '../../assets/logo.png';
 import { login, signup } from '../../firebase.js';
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [signState, setSignState] = useState('login');
@@ -10,6 +11,8 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+
+  const navigate = useNavigate();
 
   // Precarga del logo
   useEffect(() => {
@@ -22,8 +25,9 @@ const Login = () => {
     setSuccessMessage('');
     setErrorMessage('');
     try {
-      if (signState === 'login') {
+     if (signState === 'login') {
         await login(email, password);
+        navigate("/"); // 🚀 redirige al Home
       } else {
         await signup(name, email, password);
         setSuccessMessage('¡Registro exitoso! Ahora puedes iniciar sesión.');

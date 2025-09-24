@@ -32,7 +32,7 @@ const MovieDetail = () => {
       .catch(err => console.error(err));
 
     // Fetch trailer
-    fetch(`https://api.themoviedb.org/3/movie/${id}/videos?language=es-ES`, options)
+    fetch(`https://api.themoviedb.org/3/movie/${id}/videos?language=us-US`, options)
       .then(res => res.json())
       .then(data => {
         const trailerVideo = data.results.find(video => video.type === 'Trailer' && video.site === 'YouTube');
@@ -43,6 +43,10 @@ const MovieDetail = () => {
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+
+  const handleActorClick = (actorId) => {
+    navigate(`/person/${actorId}`);
+  };
 
   if (!movie) return <div>Loading...</div>;
 
@@ -84,6 +88,8 @@ const MovieDetail = () => {
                 }
                 alt={actor.name}
                 className="cast-img"
+                onClick={() => handleActorClick(actor.id)}
+                style={{ cursor: 'pointer' }}
               />
               <p>{actor.name}</p>
               <p className="character">{actor.character}</p>

@@ -1,0 +1,163 @@
+.actor-detail {
+  background: #141414;
+  color: #e5e5e5;
+  min-height: 100vh;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.actor-detail-backdrop {
+  position: relative;
+  width: 100%;
+  height: 450px;
+  overflow: hidden;
+}
+
+.actor-backdrop-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(50%);
+}
+
+.actor-detail-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(20, 20, 20, 0.5), #141414);
+  display: flex;
+  flex-direction: column;
+  padding: 20px 6%;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  color: #e5e5e5;
+  font-size: 24px;
+  cursor: pointer;
+  align-self: flex-start;
+  margin-bottom: 20px;
+}
+
+.back-btn:hover {
+  color: #e50914;
+}
+
+.actor-detail-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.actor-detail-content h1 {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+.actor-info {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.actor-profile-img {
+  width: 235px;
+  height: 354px;
+  border-radius: 16px;
+  object-fit: cover;
+}
+
+.actor-details {
+  flex: 1;
+  min-width: 300px;
+}
+
+.actor-details h3 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.actor-details p {
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: 15px;
+}
+
+.actor-details p strong {
+  color: #fff;
+}
+
+.movies-section {
+  padding: 20px 6%;
+  margin: 0 auto;
+}
+
+.movies-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.movies-section h2 {
+  font-size: 24px;
+  margin: 0;
+}
+
+.sort-selector {
+  background: #333;
+  color: #e5e5e5;
+  border: 1px solid #666;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  outline: none;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.sort-selector:hover {
+  background: #444;
+}
+
+.sort-selector:focus {
+  border-color: #e509146b;
+}
+
+.sort-selector option {
+  background: #333;
+  color: #e5e5e5;
+}
+
+.movies-list {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.movie-card {
+  width: 160px;
+  cursor: pointer;
+}
+
+.movie-card:hover .movie-img {
+  opacity: 0.8;
+}
+
+.movie-img {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.movie-card p {
+  font-size: 14px;
+  margin: 5px 0;
+}
+
+.movie-year {
+  color: #999;
+  font-size: 12px;
+}

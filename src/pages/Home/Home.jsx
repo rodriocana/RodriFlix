@@ -1,22 +1,22 @@
-import React, { useEffect, useState } from 'react' 
-import './Home.css'
-import NavBar from '../../components/Navbar/Navbar.jsx'
-import Footer from '../../components/Footer/Footer.jsx'
-import play_icon from '../../assets/Play_icon.png'
-import info_icon from '../../assets/info_icon.png'
-import TitleCards from '../../components/TitleCards/TitleCards.jsx'
+import React, { useEffect, useState } from 'react';
+import './Home.css';
+import NavBar from '../../components/Navbar/Navbar.jsx';
+import Footer from '../../components/Footer/Footer.jsx';
+import play_icon from '../../assets/Play_icon.png';
+import info_icon from '../../assets/info_icon.png';
+import TitleCards from '../../components/TitleCards/TitleCards.jsx';
 import { useNavigate } from 'react-router-dom';
 
 const options = {
   method: 'GET',
   headers: {
     accept: 'application/json',
-    Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2Y2UxMzViZjFiYjU2Y2VlNGE3NjUyYjdkYzRhMDBiMSIsIm5iZiI6MTcwOTcyOTY2NC45ODIsInN1YiI6IjY1ZTg2NzgwY2FhYjZkMDE4NTk2NjcwYiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.Lbf4T7hgr1EZ2W2GpHDw16P19eU7Rw0cgg-y_ap8UKU'
+    Authorization: 'Bearer TU_TOKEN_AQUI'
   }
 };
 
-const Home = () => {
-  const [heroMovies, setHeroMovies] = useState([]);
+const Home = ({ type = "movie" }) => { // 👈 ahora puede ser "movie" o "tv"
+  const [heroItems, setHeroItems] = useState([]);
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
   const [heroTitle, setHeroTitle] = useState('');
   const [heroDescription, setHeroDescription] = useState('');
@@ -24,79 +24,57 @@ const Home = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch now playing movies for hero section
-    fetch(`https://api.themoviedb.org/3/movie/now_playing?language=es-ES&page=1`, options)
+    // 👇 si es movie usa now_playing, si es tv usa on_the_air
+    const endpoint = type === "movie" ? "now_playing" : "on_the_air";
+    fetch(`https://api.themoviedb.org/3/${type}/${endpoint}?language=es-ES&page=1`, options)
       .then(res => res.json())
       .then(res => {
-        const movies = res.results.slice(0, 5); // Get first 5 movies for rotation
-        setHeroMovies(movies);
-        if (movies.length > 0) {
-          // Set initial movie
-          const initialMovie = movies[0];
-          setHeroTitle(initialMovie.title);
-          setHeroDescription(initialMovie.overview);
+        const items = res.results.slice(0, 5);
+        setHeroItems(items);
+        if (items.length > 0) {
+          const first = items[0];
+          setHeroTitle(type === "movie" ? first.title : first.name);
+          setHeroDescription(first.overview);
         }
       })
       .catch(err => console.error(err));
-  }, []);
+  }, [type]);
 
   useEffect(() => {
-    if (heroMovies.length === 0) return;
-
+    if (heroItems.length === 0) return;
     const interval = setInterval(() => {
       setIsFading(true);
       setTimeout(() => {
-        setCurrentHeroIndex((prevIndex) => (prevIndex + 1) % heroMovies.length);
+        setCurrentHeroIndex((prevIndex) => (prevIndex + 1) % heroItems.length);
         setIsFading(false);
-      }, 500); // Match CSS transition duration
-    }, 4000); // Change every 4 seconds
-
+      }, 500);
+    }, 4000);
     return () => clearInterval(interval);
-  }, [heroMovies]);
+  }, [heroItems]);
 
   useEffect(() => {
-    if (heroMovies.length === 0) return;
-
-    // Update title and description when index changes
-    const currentMovie = heroMovies[currentHeroIndex];
-    setHeroTitle(currentMovie.title);
-    setHeroDescription(currentMovie.overview);
-  }, [currentHeroIndex, heroMovies]);
+    if (heroItems.length === 0) return;
+    const current = heroItems[currentHeroIndex];
+    setHeroTitle(type === "movie" ? current.title : current.name);
+    setHeroDescription(current.overview);
+  }, [currentHeroIndex, heroItems, type]);
 
   const truncateDescription = (text) => {
-    if (text.length > 150) {
-      return text.substring(0, 150) + '...';
-    }
-    return text;
+    if (!text) return "";
+    return text.length > 150 ? text.substring(0, 150) + "..." : text;
   };
 
-  if (heroMovies.length === 0) {
+  if (heroItems.length === 0) {
     return (
       <div className='home'>
         <NavBar />
-        <div className="hero">
-          <div className="banner-img" style={{background: 'linear-gradient(45deg, #141414, #e50914)'}} />
-          <div className="hero-caption">
-            <div className='caption-img' style={{width: '90%', maxWidth: '420px', height: '80px', background: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white'}}>Cargando...</div>
-            <p>Cargando películas en cartelera...</p>
-            <div className="hero-btns">
-              <button className='btn'><img src={play_icon} alt="" />Player</button>
-              <button className='btn dark-btn'><img src={info_icon} alt="" />More Info</button>
-            </div>
-          </div>
-        </div>
-        <div className="more-cards">
-          <TitleCards title={"En cartelera"} category={"now_playing"}  />
-          <TitleCards  title={"Próximamente"} category={"upcoming"}/>
-          <TitleCards title={"Top 250"} category={"top_rated"}  />
-        </div>
-        <Footer />
+        <p>Cargando {type === "movie" ? "películas" : "series"}...</p>
       </div>
     );
   }
 
-  const currentMovie = heroMovies[currentHeroIndex];
-  const backdropUrl = `https://image.tmdb.org/t/p/original${currentMovie.backdrop_path}`;
+  const current = heroItems[currentHeroIndex];
+  const backdropUrl = `https://image.tmdb.org/t/p/original${current.backdrop_path}`;
 
   return (
     <div className='home'>
@@ -104,7 +82,7 @@ const Home = () => {
       <div className="hero">
         <img 
           src={backdropUrl} 
-          alt={currentMovie.title} 
+          alt={type === "movie" ? current.title : current.name} 
           className={`banner-img ${isFading ? 'fade-out' : 'fade-in'}`} 
         />
         <div className="hero-caption">
@@ -115,23 +93,34 @@ const Home = () => {
             {truncateDescription(heroDescription)}
           </p>
           <div className="hero-btns">
-            <button className='btn' onClick={() => {/* Navigate to play */}}>
+            <button className='btn'>
               <img src={play_icon} alt="" />Reproducir
             </button>
-            <button className='btn dark-btn' onClick={() => navigate(`/movie/${currentMovie.id}`)}>
+            <button className='btn dark-btn' onClick={() => navigate(`/${type}/${current.id}`)}>
               <img src={info_icon} alt="" />Más información
             </button>
           </div>
         </div>
       </div>
       <div className="more-cards">
-        <TitleCards title={"En cartelera"} category={"now_playing"}  />
-        <TitleCards  title={"Próximamente"} category={"upcoming"}/>
-        <TitleCards title={"Top 250"} category={"top_rated"}  />
+        {type === "movie" ? (
+          <>
+            <TitleCards title={"En cartelera"} category={"now_playing"} type="movie" />
+            <TitleCards title={"Próximamente"} category={"upcoming"} type="movie" />
+            <TitleCards title={"Top 250"} category={"top_rated"} type="movie" />
+          </>
+        ) : (
+          <>
+            <TitleCards title={"Al aire"} category={"on_the_air"} type="tv" />
+            <TitleCards title={"Hoy en TV"} category={"airing_today"} type="tv" />
+            <TitleCards title={"Top Rated"} category={"top_rated"} type="tv" />
+            <TitleCards title={"Popular"} category={"popular"} type="tv" />
+          </>
+        )}
       </div>
       <Footer />
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

@@ -3,11 +3,12 @@ import { Routes, Route, useNavigate } from 'react-router-dom';
 import Home from './pages/Home/Home.jsx';
 import Login from './pages/Login/Login.jsx';
 import MovieDetail from './pages/Movie-Detail/MovieDetail.jsx';
+import MovieDetailActor from './pages/Movie-Detail-Actor/Movie-Detail-Actor.jsx';
 import { auth } from './firebase.js';
 import { onAuthStateChanged } from 'firebase/auth';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import  './spinner.css';
+import './spinner.css';
 import netflixLogo from './assets/netflix_spinner.gif';
 
 const App = () => {
@@ -16,44 +17,29 @@ const App = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const minLoadingTime = 2000; // 2 seconds minimum loading time
-    const startTime = Date.now();
-
     const unsubscribe = onAuthStateChanged(
       auth,
       (currentUser) => {
         setUser(currentUser);
-        // Calculate remaining time to ensure minimum 2s loading
-        const elapsedTime = Date.now() - startTime;
-        const remainingTime = Math.max(0, minLoadingTime - elapsedTime);
-
-        setTimeout(() => {
-          setLoading(false);
-          if (currentUser) {
-            console.log("User is signed in:", currentUser);
-            navigate('/');
-          } else {
-            console.log("Logged out");
-            navigate('/login');
-          }
-        }, remainingTime);
+        setLoading(false);
+        if (currentUser) {
+          console.log("User is signed in:", currentUser);
+        } else {
+          console.log("Logged out");
+          navigate('/login', { replace: true });
+        }
       },
       (error) => {
         console.error("Error checking auth state:", error);
-        const elapsedTime = Date.now() - startTime;
-        const remainingTime = Math.max(0, minLoadingTime - elapsedTime);
-        
-        setTimeout(() => {
-          setLoading(false);
-          navigate('/login');
-        }, remainingTime);
+        setLoading(false);
+        navigate('/login', { replace: true });
       }
     );
 
     return () => unsubscribe();
   }, [navigate]);
 
-if (loading) {
+  if (loading) {
     return (
       <div className="loading-container">
         <div className="spinner">
@@ -79,10 +65,23 @@ if (loading) {
         theme="dark"
       />
       <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/" element={user ? <Home /> : <Login />} />
-        <Route path="/movie/:id" element={user ? <MovieDetail /> : <Login />} />
-      </Routes>
+  <Route path="/login" element={<Login />} />
+
+  {/* Home con películas */}
+  <Route path="/" element={user ? <Home type="movie" /> : <Login />} />
+
+  {/* Home con series */}
+  <Route path="/tv" element={user ? <Home type="tv" /> : <Login />} />
+
+  {/* Detalle de película */}
+  <Route path="/movie/:id" element={user ? <MovieDetail /> : <Login />} />
+
+  {/* Detalle de serie */}
+  <Route path="/tv/:id" element={user ? <MovieDetail /> : <Login />} />
+
+  {/* Detalle de actor */}
+  <Route path="/person/:id" element={user ? <MovieDetailActor /> : <Login />} />
+</Routes>
     </div>
   );
 };

@@ -39,13 +39,14 @@ const signup = async (name, email, password) => {
 
 const login = async (email, password) => {
   try {
-    signInWithEmailAndPassword(auth, email, password);
+    const res = await signInWithEmailAndPassword(auth, email, password);
+    return res.user; // devolvemos el usuario
   } catch (error) {
     console.log("Error logging in:", error);
     toast.error(error.code);
+    throw error;
   }
-}
-
+};
 const logout = () =>{
   signOut(auth);
 }
