@@ -39,6 +39,7 @@
   cursor: pointer;
   align-self: flex-start;
   margin-bottom: 20px;
+  z-index: 2000;
 }
 
 .back-btn:hover {
@@ -160,4 +161,25 @@
 .movie-year {
   color: #999;
   font-size: 12px;
+}
+
+.btn-volver-inicio {
+  position: fixed;       /* Fijo en la ventana */
+  bottom: 20px;          /* 20px desde abajo */
+  right: 20px;           /* 20px desde la derecha */
+  padding: 10px 20px;
+  background-color: #e50914; /* Rojo Netflix */
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  z-index: 1000;         /* Para que esté por encima de todo */
+}
+
+.btn-volver-inicio:hover {
+  background-color: #f40612;
+  transform: translateY(-2px);
 }

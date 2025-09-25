@@ -116,3 +116,28 @@
 .hero-btns .btn.dark-btn:hover {
   background: #6d6d6e66;
 }
+
+
+/* Scrollbar completo */
+::-webkit-scrollbar {
+  width: 10px;           /* ancho vertical */
+  height: 10px;          /* alto horizontal */
+}
+
+/* Track (fondo) */
+::-webkit-scrollbar-track {
+  background: #333;
+  border-radius: 5px;
+}
+
+/* Thumb (la barra que se mueve) */
+::-webkit-scrollbar-thumb {
+  background-color: #c71d25;
+  border-radius: 5px;
+  border: 2px solid #333; /* separa del track */
+}
+
+/* Hover del thumb */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #f40612;
+}

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 import Home from './pages/Home/Home.jsx';
 import Login from './pages/Login/Login.jsx';
 import MovieDetail from './pages/Movie-Detail/MovieDetail.jsx';
@@ -13,6 +14,7 @@ import netflixLogo from './assets/netflix_spinner.gif';
 
 const App = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
 
@@ -50,6 +52,76 @@ const App = () => {
     );
   }
 
+  // Animation for left-to-right (used for non-home routes)
+  const pageVariants = {
+    initial: {
+      opacity: 0,
+      x: -40,
+    },
+    in: {
+      opacity: 1,
+      x: 0,
+    },
+    out: {
+      opacity: 0,
+      x: 40,
+    },
+  };
+
+  // Animation for fade from back to front (used for home route)
+
+
+  const pageTransition = {
+    type: 'tween',
+    ease: 'easeInOut',
+    duration: 1,
+  };
+
+    const pageTransitionInicio = {
+    type: 'tween',
+    ease: 'easeInOut',
+    duration: 1.2,
+  };
+
+   const pageVariantsInicio = {
+    initial: {
+      opacity: 0,
+      scale: 0.9, // Slightly scaled down to simulate coming from "back"
+    },
+    in: {
+      opacity: 1,
+      scale: 1, // Scales to normal size
+    },
+    out: {
+      opacity: 0,
+      scale: 1.2, // Slightly scales up to simulate moving "back"
+    },
+  };
+
+  const pageVariantsLogin = {
+  initial: {
+    opacity: 0,
+    scale: 0.9,       // empieza más pequeño
+    zIndex: -1         // opcional: efecto de “atrás”
+  },
+  in: {
+    opacity: 1,
+    scale: 1,
+    zIndex: 0,
+  },
+  out: {
+    opacity: 0,
+    scale: 0.9,
+    zIndex: -1
+  }
+};
+
+  const pageTransitionLogin = {
+  type: "tween",       // o "spring" para rebote
+  ease: "easeOut",
+  duration: 1.5
+};
+
   return (
     <div>
       <ToastContainer
@@ -64,24 +136,154 @@ const App = () => {
         pauseOnHover
         theme="dark"
       />
-      <Routes>
-  <Route path="/login" element={<Login />} />
-
-  {/* Home con películas */}
-  <Route path="/" element={user ? <Home type="movie" /> : <Login />} />
-
-  {/* Home con series */}
-  <Route path="/tv" element={user ? <Home type="tv" /> : <Login />} />
-
-  {/* Detalle de película */}
-  <Route path="/movie/:id" element={user ? <MovieDetail /> : <Login />} />
-
-  {/* Detalle de serie */}
-  <Route path="/tv/:id" element={user ? <MovieDetail /> : <Login />} />
-
-  {/* Detalle de actor */}
-  <Route path="/person/:id" element={user ? <MovieDetailActor /> : <Login />} />
-</Routes>
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+         <Route
+          path="/login"
+          element={
+            <motion.div
+              initial="initial"
+              animate="in"
+              exit="out"
+              variants={pageVariantsLogin}
+              transition={pageTransitionLogin}
+            >
+              <Login />
+            </motion.div>
+          }
+        />
+          <Route
+            path="/"
+            element={
+              user ? (
+                <motion.div
+                  initial="initial"
+                  animate="in"
+                  exit="out"
+                  variants={pageVariantsInicio} // Use fade animation for home route
+                  transition={pageTransitionInicio}
+                >
+                  <Home type="movie" />
+                </motion.div>
+              ) : (
+                <motion.div
+                  initial="initial"
+                  animate="in"
+                  exit="in"
+                  variants={pageVariants}
+                  transition={pageTransition}
+                >
+                  <Login />
+                </motion.div>
+              )
+            }
+          />
+          <Route
+            path="/tv"
+            element={
+              user ? (
+                <motion.div
+                  initial="initial"
+                  animate="in"
+                  exit="out"
+                  variants={pageVariants}
+                  transition={pageTransition}
+                >
+                  <Home type="tv" />
+                </motion.div>
+              ) : (
+                <motion.div
+                  initial="initial"
+                  animate="in"
+                  exit="out"
+                  variants={pageVariants}
+                  transition={pageTransition}
+                >
+                  <Login />
+                </motion.div>
+              )
+            }
+          />
+          <Route
+            path="/movie/:id"
+            element={
+              user ? (
+                <motion.div
+                  initial="initial"
+                  animate="in"
+                  exit="out"
+                  variants={pageVariants}
+                  transition={pageTransition}
+                >
+                  <MovieDetail />
+                </motion.div>
+              ) : (
+                <motion.div
+                  initial="initial"
+                  animate="in"
+                  exit="out"
+                  variants={pageVariants}
+                  transition={pageTransition}
+                >
+                  <Login />
+                </motion.div>
+              )
+            }
+          />
+          <Route
+            path="/tv/:id"
+            element={
+              user ? (
+                <motion.div
+                  initial="initial"
+                  animate="in"
+                  exit="out"
+                  variants={pageVariants}
+                  transition={pageTransition}
+                >
+                  <MovieDetail />
+                </motion.div>
+              ) : (
+                <motion.div
+                  initial="initial"
+                  animate="in"
+                  exit="out"
+                  variants={pageVariants}
+                  transition={pageTransition}
+                >
+                  <Login />
+                </motion.div>
+              )
+            }
+          />
+          <Route
+            path="/person/:id"
+            element={
+              user ? (
+                <motion.div
+                  initial="initial"
+                  animate="in"
+                  exit="out"
+                  variants={pageVariants}
+                  transition={pageTransition}
+                >
+                  <MovieDetailActor />
+                </motion.div>
+              ) : (
+                <motion.div
+                  initial="initial"
+                  animate="in"
+                  exit="out"
+                  variants={pageVariants}
+                  transition={pageTransition}
+                >
+                  <Login />
+                </motion.div>
+              )
+            }
+          />
+        </Routes>
+      </AnimatePresence>
     </div>
   );
 };

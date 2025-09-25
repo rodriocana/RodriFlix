@@ -11,7 +11,7 @@ const options = {
   method: 'GET',
   headers: {
     accept: 'application/json',
-    Authorization: 'Bearer TU_TOKEN_AQUI'
+    Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2Y2UxMzViZjFiYjU2Y2VlNGE3NjUyYjdkYzRhMDBiMSIsIm5iZiI6MTcwOTcyOTY2NC45ODIsInN1YiI6IjY1ZTg2NzgwY2FhYjZkMDE4NTk2NjcwYiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.Lbf4T7hgr1EZ2W2GpHDw16P19eU7Rw0cgg-y_ap8UKU'
   }
 };
 
@@ -24,13 +24,14 @@ const Home = ({ type = "movie" }) => { // 👈 ahora puede ser "movie" o "tv"
   const navigate = useNavigate();
 
   useEffect(() => {
-    // 👇 si es movie usa now_playing, si es tv usa on_the_air
+    // 👇 si es movie usa now_playing, si es tv usa on_the_air ( aqui se muestra las imagenes slider principales)
     const endpoint = type === "movie" ? "now_playing" : "on_the_air";
     fetch(`https://api.themoviedb.org/3/${type}/${endpoint}?language=es-ES&page=1`, options)
       .then(res => res.json())
       .then(res => {
         const items = res.results.slice(0, 5);
-        setHeroItems(items);
+       setHeroItems(items);
+        setCurrentHeroIndex(0); // reinicia el slider
         if (items.length > 0) {
           const first = items[0];
           setHeroTitle(type === "movie" ? first.title : first.name);
@@ -40,18 +41,27 @@ const Home = ({ type = "movie" }) => { // 👈 ahora puede ser "movie" o "tv"
       .catch(err => console.error(err));
   }, [type]);
 
-  useEffect(() => {
-    if (heroItems.length === 0) return;
-    const interval = setInterval(() => {
-      setIsFading(true);
-      setTimeout(() => {
-        setCurrentHeroIndex((prevIndex) => (prevIndex + 1) % heroItems.length);
-        setIsFading(false);
-      }, 500);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, [heroItems]);
 
+  // este fech sirve para cambiar los segundos de movimiento del slider
+  useEffect(() => {
+  if (heroItems.length === 0) return;
+
+  let timeoutId;
+  const intervalId = setInterval(() => {
+    setIsFading(true);
+    timeoutId = setTimeout(() => {
+      setCurrentHeroIndex((prevIndex) => (prevIndex + 1) % heroItems.length);
+      setIsFading(false);
+    }, 500);
+  }, 4000);
+
+  return () => {
+    clearInterval(intervalId);
+    clearTimeout(timeoutId); // <--- limpiar timeout pendiente
+  };
+}, [heroItems]);
+
+  // este fech actualiza el titulo de cada pelicula
   useEffect(() => {
     if (heroItems.length === 0) return;
     const current = heroItems[currentHeroIndex];

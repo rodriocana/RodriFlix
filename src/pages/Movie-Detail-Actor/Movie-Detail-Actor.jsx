@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import defaultPoster from '../../assets/default-poster.png'; // Import default image
+import defaultPoster from '../../assets/default-poster.png';
 import './Movie-Detail-Actor.css';
 
 const MovieDetailActor = () => {
@@ -8,7 +8,8 @@ const MovieDetailActor = () => {
   const navigate = useNavigate();
   const [actor, setActor] = useState(null);
   const [movies, setMovies] = useState([]);
-  const [sortOrder, setSortOrder] = useState('newest'); // Default sort: newest first
+  const [sortOrder, setSortOrder] = useState('newest');
+  const [tvShows, setTvShows] = useState([]);
 
   const options = {
     method: 'GET',
@@ -19,30 +20,40 @@ const MovieDetailActor = () => {
   };
 
   useEffect(() => {
-    // Fetch actor details
     fetch(`https://api.themoviedb.org/3/person/${id}?language=es-ES`, options)
       .then(res => res.json())
       .then(data => setActor(data))
       .catch(err => console.error('Error fetching actor details:', err));
 
-    // Fetch actor's movie credits
     fetch(`https://api.themoviedb.org/3/person/${id}/movie_credits?language=es-ES`, options)
       .then(res => res.json())
       .then(data => {
-        // Sort movies based on sortOrder
         const sortedMovies = data.cast
           .sort((a, b) => {
-            if (sortOrder === 'popular') {
-              return (b.popularity || 0) - (a.popularity || 0); // Sort by popularity (descending)
-            }
+            if (sortOrder === 'popular') return (b.popularity || 0) - (a.popularity || 0);
             const dateA = a.release_date ? new Date(a.release_date) : new Date(0);
             const dateB = b.release_date ? new Date(b.release_date) : new Date(0);
             return sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
           })
-          .slice(0, 20); // Limit to 20 movies
+          .slice(0, 20);
         setMovies(sortedMovies);
       })
       .catch(err => console.error('Error fetching movie credits:', err));
+
+    fetch(`https://api.themoviedb.org/3/person/${id}/tv_credits?language=es-ES`, options)
+      .then(res => res.json())
+      .then(data => {
+        const sortedTv = data.cast
+          .sort((a, b) => {
+            if (sortOrder === 'popular') return (b.popularity || 0) - (a.popularity || 0);
+            const dateA = a.first_air_date ? new Date(a.first_air_date) : new Date(0);
+            const dateB = b.first_air_date ? new Date(b.first_air_date) : new Date(0);
+            return sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
+          })
+          .slice(0, 20);
+        setTvShows(sortedTv);
+      })
+      .catch(err => console.error('Error fetching TV credits:', err));
   }, [id, sortOrder]);
 
   if (!actor) return <div>Loading...</div>;
@@ -111,7 +122,36 @@ const MovieDetailActor = () => {
           ))}
         </div>
       </div>
-    </div>
+      <div className="movies-section">
+        <div className="movies-header">
+          <h2>Series</h2>
+        </div>
+        <div className="movies-list">
+          {tvShows.map(tv => (
+            <div
+              key={tv.id}
+              className="movie-card"
+              onClick={() => navigate(`/tv/${tv.id}`)}
+            >
+              <img
+                src={
+                  tv.poster_path
+                    ? `https://image.tmdb.org/t/p/w200${tv.poster_path}`
+                    : defaultPoster
+                  }
+                  alt={tv.name}
+                  className="movie-img"
+                />
+                <p>{tv.name}</p>
+                <p className="movie-year">{tv.first_air_date?.split('-')[0] || 'N/A'}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+        <button className="btn-volver-inicio" onClick={() => navigate('/')}>
+          Volver a inicio
+        </button>
+      </div>
   );
 };
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'; // Añade useLocation
 import './Navbar.css';
 import logo from '../../assets/logo.png';
 import search_icon from '../../assets/search_icon.svg';
@@ -19,6 +19,17 @@ const Navbar = () => {
   const [activeTab, setActiveTab] = useState("Inicio");
 
 
+  // Actualiza activeTab según la ruta actual
+  useEffect(() => {
+    if (location.pathname === '/') {
+      setActiveTab('Inicio');
+    } else if (location.pathname === '/tv') {
+      setActiveTab('Series');
+    } else if (location.pathname.startsWith('/movie')) {
+      setActiveTab('Películas');
+    }
+  }, [location.pathname]);
+
   const options = {
     method: 'GET',
     headers: {
@@ -36,18 +47,20 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    const searchMovies = async () => {
+    const searchContent = async () => {
       if (query.length > 2) {
         console.log('Searching for:', query);
         try {
+          // Determinar el tipo de búsqueda según la pestaña activa
+          const searchType = activeTab === "Series" ? "tv" : "movie";
           const response = await axios.get(
-            `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}`,
+            `https://api.themoviedb.org/3/search/${searchType}?query=${encodeURIComponent(query)}&language=es-ES`,
             options
           );
           console.log('API response:', response.data.results);
           setSearchResults(response.data.results || []);
         } catch (error) {
-          console.error('Error fetching movies:', error.message, error.response?.data);
+          console.error('Error fetching content:', error.message, error.response?.data);
           setSearchResults([]);
         }
       } else {
@@ -55,8 +68,8 @@ const Navbar = () => {
         setSearchResults([]);
       }
     };
-    searchMovies();
-  }, [query]);
+    searchContent();
+  }, [query, activeTab]); // Añadir activeTab como dependencia
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -76,7 +89,6 @@ const Navbar = () => {
     if (!isSearchOpen) {
       setQuery('');
       setSearchResults([]);
-      // Set focus on the input when opening the search
       setTimeout(() => {
         if (searchRef.current) {
           const input = searchRef.current.querySelector('input');
@@ -86,9 +98,9 @@ const Navbar = () => {
     }
   };
 
-  const handleMovieSelect = (movieId) => {
-    console.log(`Navigating to /movie/${movieId}`);
-    navigate(`/movie/${movieId}`);
+  const handleItemSelect = (itemId, type) => {
+    console.log(`Navigating to /${type}/${itemId}`);
+    navigate(`/${type}/${itemId}`);
     setIsSearchOpen(false);
     setQuery('');
     setSearchResults([]);
@@ -97,54 +109,55 @@ const Navbar = () => {
   return (
     <div className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
       <div className="navbar-left">
-        <img src={logo} alt="Logo" onClick={() => navigate("/")}/>
-    <ul>
-  <li
-    className={activeTab === "Inicio" ? "active" : ""}
-    onClick={() => {
-      navigate("/");
-      setActiveTab("Inicio");
-    }}
-  >
-    Inicio
-  </li>
-  <li
-    className={activeTab === "Series" ? "active" : ""}
-    onClick={() => {
-      navigate("/tv");
-      setActiveTab("Series");
-    }}
-  >
-    Series
-  </li>
-  <li
-    className={activeTab === "Películas" ? "active" : ""}
-    onClick={() => {
-      navigate("/");
-      setActiveTab("Películas");
-    }}
-  >
-    Películas
-  </li>
-  <li
-    className={activeTab === "Popular" ? "active" : ""}
-    onClick={() => setActiveTab("Popular")}
-  >
-    Popular
-  </li>
-  <li
-    className={activeTab === "Mi lista" ? "active" : ""}
-    onClick={() => setActiveTab("Mi lista")}
-  >
-    Mi lista
-  </li>
-  <li
-    className={activeTab === "Buscar por lenguaje" ? "active" : ""}
-    onClick={() => setActiveTab("Buscar por lenguaje")}
-  >
-    Buscar por lenguaje
-  </li>
-</ul>
+       <img 
+            src={logo} 
+            alt="Logo" 
+            onClick={() => {
+              navigate("/");
+              setActiveTab("Inicio"); // <--- importante
+            }} 
+          />
+        <ul>
+          <li
+            className={activeTab === "Inicio" ? "active" : ""}
+            onClick={() => {
+              navigate("/");
+              setActiveTab("Inicio");
+            }}
+          >
+            Inicio
+          </li>
+          <li
+            className={activeTab === "Series" ? "active" : ""}
+            onClick={() => {
+              navigate("/tv");
+              setActiveTab("Series");
+            }}
+          >
+            Series
+          </li>
+          <li
+            className={activeTab === "Películas" ? "active" : ""}
+            onClick={() => {
+              navigate("/peliculas");
+              setActiveTab("Películas");
+            }}
+          >
+            Películas
+          </li>
+          <li
+            className={activeTab === "Popular" ? "active" : ""}
+            onClick={() => setActiveTab("Popular")}
+          >
+            Popular
+          </li>
+          <li
+            className={activeTab === "Mi lista" ? "active" : ""}
+            onClick={() => setActiveTab("Mi lista")}
+          >
+            Mi lista
+          </li>
+        </ul>
       </div>
       <div className="navbar-right">
         <div className="search-container" ref={searchRef}>
@@ -155,7 +168,7 @@ const Navbar = () => {
               console.log('Query changed:', e.target.value);
               setQuery(e.target.value);
             }}
-            placeholder="Buscar películas..."
+            placeholder={activeTab === "Series" ? "Buscar series..." : "Buscar películas..."}
             className={`search-input ${isSearchOpen ? 'open' : ''}`}
             autoFocus={isSearchOpen}
           />
@@ -167,20 +180,23 @@ const Navbar = () => {
           />
           {isSearchOpen && searchResults.length > 0 && (
             <div className="search-results">
-              {searchResults.map((movie) => (
+              {searchResults.map((item) => (
                 <div
-                  key={movie.id}
+                  key={item.id}
                   className="search-result-item"
-                  onClick={() => handleMovieSelect(movie.id)}
+                  onClick={() => handleItemSelect(item.id, activeTab === "Series" ? "tv" : "movie")}
                 >
-                  {movie.poster_path && (
+                  {item.poster_path && (
                     <img
-                      src={`https://image.tmdb.org/t/p/w92${movie.poster_path}`}
-                      alt={movie.title}
+                      src={`https://image.tmdb.org/t/p/w92${item.poster_path}`}
+                      alt={item.title || item.name}
                       className="search-result-poster"
                     />
                   )}
-                  <span>{movie.title} ({movie.release_date?.split('-')[0] || 'N/A'})</span>
+                  <span>
+                    {item.title || item.name} (
+                    {(item.release_date || item.first_air_date)?.split('-')[0] || 'N/A'})
+                  </span>
                 </div>
               ))}
             </div>

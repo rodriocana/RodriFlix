@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import './MovieDetail.css';
 
 const MovieDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [movie, setMovie] = useState(null);
+  const location = useLocation();
+  const [item, setItem] = useState(null);
   const [cast, setCast] = useState([]);
   const [trailer, setTrailer] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Determinar si es película o serie según la URL
+  const type = location.pathname.includes('/movie/') ? 'movie' : 'tv';
 
   const options = {
     method: 'GET',
@@ -19,27 +23,36 @@ const MovieDetail = () => {
   };
 
   useEffect(() => {
-    // Fetch movie details
-    fetch(`https://api.themoviedb.org/3/movie/${id}?language=es-ES`, options)
-      .then(res => res.json())
-      .then(data => setMovie(data))
+    // Fetch detalles del ítem (película o serie)
+    fetch(`https://api.themoviedb.org/3/${type}/${id}?language=es-ES`, options)
+      .then(res => {
+        if (!res.ok) throw new Error('Error al obtener los detalles');
+        return res.json();
+      })
+      .then(data => setItem(data))
       .catch(err => console.error(err));
 
-    // Fetch cast
-    fetch(`https://api.themoviedb.org/3/movie/${id}/credits?language=es-ES`, options)
-      .then(res => res.json())
-      .then(data => setCast(data.cast.slice(0, 6))) // Limit to 6 actors
+    // Fetch reparto
+    fetch(`https://api.themoviedb.org/3/${type}/${id}/credits?language=es-ES`, options)
+      .then(res => {
+        if (!res.ok) throw new Error('Error al obtener el reparto');
+        return res.json();
+      })
+      .then(data => setCast(data.cast.slice(0, 6))) // Limitar a 6 actores
       .catch(err => console.error(err));
 
     // Fetch trailer
-    fetch(`https://api.themoviedb.org/3/movie/${id}/videos?language=us-US`, options)
-      .then(res => res.json())
+    fetch(`https://api.themoviedb.org/3/${type}/${id}/videos?language=en-US`, options)
+      .then(res => {
+        if (!res.ok) throw new Error('Error al obtener el trailer');
+        return res.json();
+      })
       .then(data => {
         const trailerVideo = data.results.find(video => video.type === 'Trailer' && video.site === 'YouTube');
         setTrailer(trailerVideo);
       })
       .catch(err => console.error(err));
-  }, [id]);
+  }, [id, type]);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -48,14 +61,27 @@ const MovieDetail = () => {
     navigate(`/person/${actorId}`);
   };
 
-  if (!movie) return <div>Loading...</div>;
+  if (!item) return <div>Loading...</div>;
+
+  // Usar 'title' para películas y 'name' para series
+  const title = type === 'movie' ? item.title : item.name;
+  // Determinar la fecha de estreno según el tipo
+  const releaseDate = type === 'movie' ? item.release_date : item.first_air_date;
+  // Formatear la fecha de estreno
+  const formattedDate = releaseDate
+    ? new Date(releaseDate).toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      })
+    : 'Fecha no disponible';
 
   return (
     <div className="movie-detail">
       <div className="movie-detail-backdrop">
         <img
-          src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
-          alt={movie.title}
+          src={`https://image.tmdb.org/t/p/original${item.backdrop_path}`}
+          alt={title}
           className="backdrop-img"
         />
         <div className="movie-detail-overlay">
@@ -63,13 +89,23 @@ const MovieDetail = () => {
             &larr; Volver
           </button>
           <div className="movie-detail-content">
-            <h1>{movie.title}</h1>
-            <p className="movie-description">{movie.overview}</p>
+            <h1>{title}</h1>
+            <p className="movie-description">{item.overview}</p>
             <div className="movie-actions">
               {trailer && (
                 <button className="trailer-btn" onClick={openModal}>
                   Ver Trailer
                 </button>
+              )}
+              {item.vote_average && (
+                <span className="movie-rating">
+                  ⭐ {item.vote_average.toFixed(1)}/10
+                </span>
+              )}
+              {releaseDate && (
+                <span className="movie-release-date">
+                  📅 {formattedDate}
+                </span>
               )}
             </div>
           </div>
@@ -114,6 +150,9 @@ const MovieDetail = () => {
           </div>
         </div>
       )}
+      <button className='btn-volver-inicio' onClick={() => navigate('/')}>
+  Volver a inicio
+</button>
     </div>
   );
 };
