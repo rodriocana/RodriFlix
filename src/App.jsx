@@ -261,7 +261,7 @@ const App = () => {
             element={
               user ? (
                 <motion.div
-                  initial="initial"
+                initial="initial"
                   animate="in"
                   exit="out"
                   variants={pageVariants}

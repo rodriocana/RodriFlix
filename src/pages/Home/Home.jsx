@@ -39,7 +39,7 @@ const Home = ({ type = "movie" }) => { // 👈 ahora puede ser "movie" o "tv"
         }
       })
       .catch(err => console.error(err));
-  }, [type]);
+  }, [type]); // cada vez que cambia el type se renderiza este useeffect pasandole movie o tv
 
 
   // este fech sirve para cambiar los segundos de movimiento del slider
