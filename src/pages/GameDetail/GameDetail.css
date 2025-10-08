@@ -1,0 +1,254 @@
+.game-detail {
+    color: #fff;
+    background: #141414;
+    min-height: 100vh;
+}
+
+.game-detail-backdrop {
+    position: relative;
+    width: 100%;
+    height: 64vh;
+    overflow: hidden;
+}
+
+.game-detail-backdrop::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 150px;
+    background: linear-gradient(to top, #141414, transparent);
+    z-index: 1;
+}
+
+.game-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.game-rating {
+    font-size: 1rem;
+    color: #f1c40f;
+    font-weight: bold;
+}
+
+.backdrop-img {
+    width: 100%;
+    height: 228%;
+    object-fit: cover;
+    filter: brightness(0.5);
+}
+
+.game-detail-overlay {
+    position: absolute;
+    top: 0;
+    margin-bottom: 0px;
+    left: 0;
+    margin-top: 0px;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 20px;
+    z-index: 2;
+}
+
+.back-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.0);
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s ease;
+}
+
+.back-btn:hover {
+    background: rgba(0, 0, 0, 0.9);
+}
+
+.game-detail-content {
+    max-width: 600px;
+}
+
+.game-detail-content h1 {
+    font-size: 3rem;
+    margin-bottom: 3px;
+}
+
+.game-description {
+    font-size: 1.1rem;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.trailer-btn {
+    background: #e50914;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.trailer-btn:hover {
+    background: #f40612;
+}
+
+.companies-section {
+    padding: 20px;
+    margin-top: -75px;
+}
+
+.companies-section h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+}
+
+.companies-list {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+}
+
+.company-item {
+    flex: 0 0 auto;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #fff;
+}
+
+.company-item p {
+    margin: 5px 0;
+}
+
+.screenshots-section {
+    padding: 20px;
+    margin-top: 39px;
+}
+
+.screenshots-section h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+}
+
+.screenshots-list {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+}
+
+.screenshot-item {
+    flex: 0 0 auto;
+    width: 200px;
+}
+
+.screenshot-img {
+    width: 200px;
+    height: 112.5px;
+    object-fit: cover;
+    border-radius: 4px;
+    transition: transform 0.2s ease;
+}
+
+.screenshot-img:hover {
+    transform: scale(1.05);
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    position: relative;
+    background: transparent;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 1200px;
+    width: 90%;
+}
+
+.image-modal-content {
+    position: relative;
+    background:transparent;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 90vw;
+    max-height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.image-modal-img {
+    max-width: 100%;
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: 36px;
+}
+
+.modal-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    padding: 4px 12px;
+    border-radius: 50%;
+    transition: background 0.3s ease;
+}
+
+.modal-close-btn:hover {
+    background: rgba(0, 0, 0, 0.9);
+}
+
+.trailer-iframe {
+    width: 100%;
+    height: 675px;
+    border: none;
+    border-radius: 4px;
+}
+
+.btn-volver-inicio {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    background-color: #e50914;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    z-index: 1000;
+}
+
+.btn-volver-inicio:hover {
+    background-color: #f40612;
+    transform: translateY(-2px);
+}

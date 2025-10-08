@@ -1,0 +1,124 @@
+.game-cards {
+  margin-top: 50px;
+  margin-bottom: 30px;
+  padding: 0 20px;
+}
+
+.game-cards h2 {
+  margin-bottom: 8px;
+  color: #fff;
+  text-shadow: 0 0 5px #00ff88, 0 0 10px #00ff88; /* Neón verde */
+  font-family: 'Orbitron', sans-serif; /* Fuente futurista */
+}
+
+.game-card-list-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.game-card-list {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 15px 20px;
+}
+
+.game-card-list::-webkit-scrollbar {
+  display: none;
+}
+
+.game-card-list .game-card {
+  position: relative;
+  flex: 0 0 auto;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.game-card-list .game-card:hover {
+  transform: scale(1.02); /* Zoom más pronunciado */
+
+  z-index: 10;
+}
+
+.game-card-list img {
+    object-fit: cover;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.game-card-list .game-card-title {
+  position: absolute;
+  top: 10px; /* Título arriba */
+  left: 10px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.game-card-list .game-card-description {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  color: #fff;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent); /* Gradiente desde abajo */
+  padding: 15px;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  max-height: 150px;
+  overflow: hidden;
+}
+
+.game-card-list .game-card:hover .game-card-description {
+  opacity: 1;
+}
+
+.game-scroll-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 255, 136, 0.5); /* Fondo neón */
+  color: #000;
+  border: 2px solid #00ff88;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  font-size: 22px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  z-index: 15;
+}
+
+.game-scroll-button.left {
+  left: 0;
+}
+
+.game-scroll-button.right {
+  right: 0;
+}
+
+.game-scroll-button:hover {
+  background: rgba(0, 255, 136, 0.8);
+  box-shadow: 0 0 10px #00ff88;
+  transform: translateY(-50%) scale(1.15);
+}
+
+.game-scroll-button:active {
+  transform: translateY(-50%) scale(0.95);
+}

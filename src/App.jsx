@@ -5,6 +5,7 @@ import Home from './pages/Home/Home.jsx';
 import Login from './pages/Login/Login.jsx';
 import MovieDetail from './pages/Movie-Detail/MovieDetail.jsx';
 import MovieDetailActor from './pages/Movie-Detail-Actor/Movie-Detail-Actor.jsx';
+import GameDetail from './pages/GameDetail/GameDetail.jsx';
 import { auth } from './firebase.js';
 import { onAuthStateChanged } from 'firebase/auth';
 import { ToastContainer } from 'react-toastify';
@@ -69,21 +70,19 @@ const App = () => {
   };
 
   // Animation for fade from back to front (used for home route)
-
-
   const pageTransition = {
     type: 'tween',
     ease: 'easeInOut',
     duration: 1,
   };
 
-    const pageTransitionInicio = {
+  const pageTransitionInicio = {
     type: 'tween',
     ease: 'easeInOut',
-    duration: 1.2,
+    duration: 1.1,
   };
 
-   const pageVariantsInicio = {
+  const pageVariantsInicio = {
     initial: {
       opacity: 0,
       scale: 0.9, // Slightly scaled down to simulate coming from "back"
@@ -99,28 +98,28 @@ const App = () => {
   };
 
   const pageVariantsLogin = {
-  initial: {
-    opacity: 0,
-    scale: 0.9,       // empieza más pequeño
-    zIndex: -1         // opcional: efecto de “atrás”
-  },
-  in: {
-    opacity: 1,
-    scale: 1,
-    zIndex: 0,
-  },
-  out: {
-    opacity: 0,
-    scale: 0.9,
-    zIndex: -1
-  }
-};
+    initial: {
+      opacity: 0,
+      scale: 0.9, // empieza más pequeño
+      zIndex: -1, // opcional: efecto de “atrás”
+    },
+    in: {
+      opacity: 1,
+      scale: 1,
+      zIndex: 0,
+    },
+    out: {
+      opacity: 0,
+      scale: 0.9,
+      zIndex: -1,
+    },
+  };
 
   const pageTransitionLogin = {
-  type: "tween",       // o "spring" para rebote
-  ease: "easeOut",
-  duration: 1.5
-};
+    type: "tween", // o "spring" para rebote
+    ease: "easeOut",
+    duration: 1.5,
+  };
 
   return (
     <div>
@@ -138,20 +137,20 @@ const App = () => {
       />
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
-         <Route
-          path="/login"
-          element={
-            <motion.div
-              initial="initial"
-              animate="in"
-              exit="out"
-              variants={pageVariantsLogin}
-              transition={pageTransitionLogin}
-            >
-              <Login />
-            </motion.div>
-          }
-        />
+          <Route
+            path="/login"
+            element={
+              <motion.div
+                initial="initial"
+                animate="in"
+                exit="out"
+                variants={pageVariantsLogin}
+                transition={pageTransitionLogin}
+              >
+                <Login />
+              </motion.div>
+            }
+          />
           <Route
             path="/"
             element={
@@ -160,7 +159,7 @@ const App = () => {
                   initial="initial"
                   animate="in"
                   exit="out"
-                  variants={pageVariantsInicio} // Use fade animation for home route
+                  variants={pageVariantsInicio}
                   transition={pageTransitionInicio}
                 >
                   <Home type="movie" />
@@ -169,9 +168,9 @@ const App = () => {
                 <motion.div
                   initial="initial"
                   animate="in"
-                  exit="in"
-                  variants={pageVariants}
-                  transition={pageTransition}
+                  exit="out"
+                  variants={pageVariantsLogin}
+                  transition={pageTransitionLogin}
                 >
                   <Login />
                 </motion.div>
@@ -196,8 +195,34 @@ const App = () => {
                   initial="initial"
                   animate="in"
                   exit="out"
+                  variants={pageVariantsLogin}
+                  transition={pageTransitionLogin}
+                >
+                  <Login />
+                </motion.div>
+              )
+            }
+          />
+          <Route
+            path="/videojuegos"
+            element={
+              user ? (
+                <motion.div
+                  initial="initial"
+                  animate="in"
+                  exit="out"
                   variants={pageVariants}
                   transition={pageTransition}
+                >
+                  <Home type="game" />
+                </motion.div>
+              ) : (
+                <motion.div
+                  initial="initial"
+                  animate="in"
+                  exit="out"
+                  variants={pageVariantsLogin}
+                  transition={pageTransitionLogin}
                 >
                   <Login />
                 </motion.div>
@@ -222,8 +247,8 @@ const App = () => {
                   initial="initial"
                   animate="in"
                   exit="out"
-                  variants={pageVariants}
-                  transition={pageTransition}
+                  variants={pageVariantsLogin}
+                  transition={pageTransitionLogin}
                 >
                   <Login />
                 </motion.div>
@@ -248,8 +273,34 @@ const App = () => {
                   initial="initial"
                   animate="in"
                   exit="out"
+                  variants={pageVariantsLogin}
+                  transition={pageTransitionLogin}
+                >
+                  <Login />
+                </motion.div>
+              )
+            }
+          />
+          <Route
+            path="/game/:id"
+            element={
+              user ? (
+                <motion.div
+                  initial="initial"
+                  animate="in"
+                  exit="out"
                   variants={pageVariants}
                   transition={pageTransition}
+                >
+                  <GameDetail />
+                </motion.div>
+              ) : (
+                <motion.div
+                  initial="initial"
+                  animate="in"
+                  exit="out"
+                  variants={pageVariantsLogin}
+                  transition={pageTransitionLogin}
                 >
                   <Login />
                 </motion.div>
@@ -261,11 +312,11 @@ const App = () => {
             element={
               user ? (
                 <motion.div
-                initial="initial"
+                  initial="initial"
                   animate="in"
                   exit="out"
-                  variants={pageVariants}
-                  transition={pageTransition}
+                  variants={pageVariantsInicio}
+                  transition={pageTransitionInicio}
                 >
                   <MovieDetailActor />
                 </motion.div>
@@ -274,8 +325,8 @@ const App = () => {
                   initial="initial"
                   animate="in"
                   exit="out"
-                  variants={pageVariants}
-                  transition={pageTransition}
+                  variants={pageVariantsLogin}
+                  transition={pageTransitionLogin}
                 >
                   <Login />
                 </motion.div>

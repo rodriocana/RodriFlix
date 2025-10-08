@@ -21,14 +21,16 @@ const Navbar = () => {
 
   // Actualiza activeTab según la ruta actual
   useEffect(() => {
-    if (location.pathname === '/') {
-      setActiveTab('Inicio');
-    } else if (location.pathname === '/tv') {
-      setActiveTab('Series');
-    } else if (location.pathname.startsWith('/movie')) {
-      setActiveTab('Películas');
-    }
-  }, [location.pathname]);
+  if (location.pathname === '/') {
+    setActiveTab('Inicio');
+  } else if (location.pathname === '/tv') {
+    setActiveTab('Series');
+  } else if (location.pathname.startsWith('/movie')) {
+    setActiveTab('Películas');
+  } else if (location.pathname === '/videojuegos') {
+    setActiveTab('Videojuegos');
+  }
+}, [location.pathname]);
 
   const options = {
     method: 'GET',
@@ -145,12 +147,15 @@ const Navbar = () => {
           >
             Películas
           </li>
-          <li
-            className={activeTab === "Popular" ? "active" : ""}
-            onClick={() => setActiveTab("Popular")}
-          >
-            Popular
-          </li>
+        <li
+          className={activeTab === "Videojuegos" ? "active" : ""}
+          onClick={() => {
+            navigate("/videojuegos");
+            setActiveTab("Videojuegos");
+          }}
+        >
+          Videojuegos
+        </li>
           <li
             className={activeTab === "Mi lista" ? "active" : ""}
             onClick={() => setActiveTab("Mi lista")}
