@@ -71,15 +71,16 @@
   left: 0;
   right: 0;
   color: #fff;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent); /* Gradiente desde abajo */
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.637), black); /* Gradiente desde abajo */
   padding: 15px;
-  font-size: 14px;
+  font-size: 13px;
   opacity: 0;
   transition: opacity 0.3s ease;
   border-bottom-left-radius: 6px;
   border-bottom-right-radius: 6px;
-  max-height: 150px;
+  max-height: fit-content;
   overflow: hidden;
+  cursor:pointer;
 }
 
 .game-card-list .game-card:hover .game-card-description {

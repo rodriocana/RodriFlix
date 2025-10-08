@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './TitleCards.css';
-import './GameCards.css'; // Importamos el nuevo CSS
+import './GameCards.css';
 
-const TitleCards = ({ title, category, type = "movie" }) => {
+const TitleCards = ({ title, category, type = "movie", watchProviderId }) => {
   const [apiData, setApiData] = useState([]);
   const cardsRef = useRef();
   const navigate = useNavigate();
@@ -39,16 +39,22 @@ const TitleCards = ({ title, category, type = "movie" }) => {
             endpoint = `http://localhost:4000/api/games?category=top100`;
           } else if (category === 'ps5') {
             endpoint = `http://localhost:4000/api/games?category=ps5`;
-          } else if (category === 'xbox') {  // ← AGREGADO: Caso para Xbox
+          } else if (category === 'xbox') {
             endpoint = `http://localhost:4000/api/games?category=xbox`;
-          } else if (category === 'nintendo') {  // ← AGREGADO: Caso para Nintendo
+          } else if (category === 'nintendo') {
             endpoint = `http://localhost:4000/api/games?category=nintendo`;
           }
-          console.log(`🔍 Frontend fetching games: ${endpoint}`); // Debug opcional
+          console.log(`🔍 Frontend fetching games: ${endpoint}`);
           const res = await fetch(endpoint);
           data = await res.json();
         } else {
-          const endpoint = `https://api.themoviedb.org/3/${type}/${category || (type === "movie" ? "now_playing" : "on_the_air")}?language=es-ES&page=1`;
+          let endpoint;
+          if (watchProviderId) {
+            // Usar discover para filtrar por proveedor y ordenar por fecha de estreno
+            endpoint = `https://api.themoviedb.org/3/discover/${type}?language=es-ES&page=1&sort_by=release_date.desc&with_watch_providers=${watchProviderId}&watch_region=ES`;
+          } else {
+            endpoint = `https://api.themoviedb.org/3/${type}/${category || (type === "movie" ? "now_playing" : "on_the_air")}?language=es-ES&page=1`;
+          }
           const res = await fetch(endpoint, tmdbOptions);
           const json = await res.json();
           data = json.results || [];
@@ -62,14 +68,13 @@ const TitleCards = ({ title, category, type = "movie" }) => {
     };
 
     fetchData();
-  }, [category, type]);
+  }, [category, type, watchProviderId]);
 
   const truncateDescription = (text, max = 250) => {
     if (!text) return "";
     return text.length > max ? text.substring(0, max) + '...' : text;
   };
 
-  // Clases dinámicas según el tipo
   const containerClass = type === "game" ? "game-cards" : "title-cards";
   const listContainerClass = type === "game" ? "game-card-list-container" : "card-list-container";
   const listClass = type === "game" ? "game-card-list" : "card-list";
@@ -108,7 +113,7 @@ const TitleCards = ({ title, category, type = "movie" }) => {
                 >
                   <img
                     src={displayImage || '/no-image.jpg'}
-                  alt={displayTitle}
+                    alt={displayTitle}
                   />
                   <p className={titleClass}>{displayTitle}</p>
                   <p className={descriptionClass}>

@@ -135,6 +135,9 @@ const Home = ({ type = "movie" }) => {
             <TitleCards title={"En cartelera"} category={"now_playing"} type="movie" />
             <TitleCards title={"Próximamente"} category={"upcoming"} type="movie" />
             <TitleCards title={"Top 250"} category={"top_rated"} type="movie" />
+              {/* <TitleCards title={"Nuevas en Netflix"} type="movie" watchProviderId="8" />
+            <TitleCards title={"Nuevas en HBO Max"} type="movie" watchProviderId="384" />
+           <TitleCards title={"Nuevas en Amazon Prime"} type="movie" watchProviderId="7" /> */}
           </>
         ) : type === "tv" ? (
           <>
